@@ -1,0 +1,7 @@
+<Solution>
+  <Project Path="PluginSetup/PluginSetup.csproj" />
+  <Project Path="PluginWithDep/PluginWithDep.csproj" />
+  <Project Path="PluginWithoutDep/PluginWithoutDep.csproj" />
+  <Project Path="task10/task10.csproj" />
+  <Project Path="task10tests/task10tests.csproj" />
+</Solution>
