@@ -20,7 +20,7 @@ public class ClassAnalyzer
 
     public IEnumerable<string> GetMethodParams(string methodname)
     {
-        return _type.GetMethods(BindingFlags.Public | BindingFlags.Instance).Where((method) => method.Name == methodname).SelectMany((method) => method.GetParameters()).Select((method) => method.Name);
+        return _type.GetMethods(BindingFlags.Public | BindingFlags.Instance).Where((method) => method.Name == methodname).SelectMany((method) => method.GetParameters()).Select((method) => method.Name)!;
     }
 
     public IEnumerable<string> GetAllFields()
