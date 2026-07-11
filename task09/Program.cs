@@ -7,7 +7,17 @@ public class Program
     public static void Main(string[] args)
     {
         Console.WriteLine(args[0]);
-        var assembly = Assembly.LoadFrom(args[0]);
+
+        Assembly assembly;
+        try
+        {
+            assembly = Assembly.LoadFrom(args[0]);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"error: {ex.Message}");
+            return;
+        }
 
         foreach (var type in assembly.GetTypes())
         {
