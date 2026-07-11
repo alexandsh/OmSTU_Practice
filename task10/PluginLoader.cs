@@ -12,8 +12,20 @@ public class PluginLoader
 
         foreach (var dll in Directory.GetFiles(dir, "*.dll"))
         {
-            var assembly = Assembly.LoadFrom(dll);
-            foreach (var type in assembly.GetTypes())
+            Assembly assembly;
+            Type[] types;
+            try
+            {
+                assembly = Assembly.LoadFrom(dll);
+                types = assembly.GetTypes();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"error:'{Path.GetFileName(dll)}': {ex.Message}");
+                continue;
+            }
+
+            foreach (var type in types)
             {
                 var attr = type.GetCustomAttribute<PluginLoadAttribute>();
                 if (attr != null && typeof(IPlugin).IsAssignableFrom(type))
@@ -23,14 +35,27 @@ public class PluginLoader
             }
         }
 
+        var loaded = new HashSet<string>();
+        var visiting = new HashSet<string>();
+
         void LoadWithDeps(string name)
         {
+            if (loaded.Contains(name))
+                return;
+            if (!plugins.ContainsKey(name))
+                throw new InvalidOperationException($"Missing dependency: '{name}'");
+            if (!visiting.Add(name))
+                throw new InvalidOperationException($"Cyclic dependency detected: '{name}'");
+
             foreach (var dep in plugins[name].deps)
             {
                 LoadWithDeps(dep);
             }
+
             var instance = (IPlugin)Activator.CreateInstance(plugins[name].type)!;
             result.Add(instance);
+            loaded.Add(name);
+            visiting.Remove(name);
         }
 
         foreach (var name in plugins.Keys)
