@@ -1,7 +1,28 @@
 ﻿using System.Reflection;
 
 
-var assembly = Assembly.LoadFrom("../../../../FileSystemCommands/bin/Debug/net9.0/FileSystemCommands.dll");
+const string dllPath = "../../../../FileSystemCommands/bin/Debug/net9.0/FileSystemCommands.dll";
+
+Assembly assembly;
+try
+{
+    assembly = Assembly.LoadFrom(dllPath);
+}
+catch (FileNotFoundException)
+{
+    Console.Error.WriteLine($"error: '{dllPath}'");
+    return 1;
+}
+catch (FileLoadException ex)
+{
+    Console.Error.WriteLine($"error: '{dllPath}': {ex.Message}");
+    return 1;
+}
+catch (BadImageFormatException)
+{
+    Console.Error.WriteLine($"error: '{dllPath}'");
+    return 1;
+}
 
 var directorySizeCommandType = assembly.GetType("FileSystemCommands.DirectorySizeCommand");
 var directorySizeCommandLaunch = directorySizeCommandType?.GetMethod("Execute", BindingFlags.Public | BindingFlags.Instance | BindingFlags.Static);
@@ -14,3 +35,5 @@ var FindFilesCommandLaunch = FindFilesCommandType?.GetMethod("Execute", BindingF
 var FindFilesCommandCopy = Activator.CreateInstance(FindFilesCommandType!, new object[] { "../../../../FileSystemCommands" , "*.cs" });
 
 FindFilesCommandLaunch?.Invoke(FindFilesCommandCopy, null);
+
+return 0;
