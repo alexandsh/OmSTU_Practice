@@ -40,4 +40,16 @@ public class DefiniteIntegral
         }
         return res;
     }
+
+    public static double SolveSingleThread(double a, double b, Func<double, double> function, double step)
+    {
+        var res = 0.0;
+
+        for (var i = a; i < b; i += step)
+        {
+            res +=  0.5 * (function(i) + function(Math.Min(i + step, b))) * (Math.Min(i + step, b) - i);
+        }
+        
+        return res;
+    }
 }
