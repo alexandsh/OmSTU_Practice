@@ -7,9 +7,11 @@ using ICommand;
 class Command : ICommand
 {
     public bool flag = false;
+    public bool IsCompleted { get; private set; } = false;
     public void Execute()
     {
         flag = true;
+        IsCompleted = true;
     }
 }
 

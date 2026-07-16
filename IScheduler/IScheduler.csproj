@@ -9,11 +9,5 @@
   <ItemGroup>
     <ProjectReference Include="..\ICommand\ICommand.csproj" />
   </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\IScheduler\IScheduler.csproj" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\RoundRobinScheduler\RoundRobinScheduler.csproj" />
-  </ItemGroup>
 
 </Project>

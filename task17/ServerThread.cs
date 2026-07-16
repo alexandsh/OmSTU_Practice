@@ -2,13 +2,15 @@
 
 using System.Collections.Concurrent;
 using ICommand;
+using IScheduler;
+using RoundRobinScheduler;
 public class ServerThread
 {
     private Thread? thread;
     private BlockingCollection<ICommand> queue = new();
     private bool needHardStop = false;
     private bool needSoftStop = false;
-
+    private IScheduler scheduler = new RoundRobinScheduler();
     public void Start()
     {
         thread = new Thread(Work);
@@ -29,21 +31,30 @@ public class ServerThread
     {
         while (!needHardStop)
         {
-            ICommand command;
-            try
+            if (scheduler.HasCommand())
             {
-                command = queue.Take();
+                var cmd = scheduler.Select();
+                cmd.Execute();
+                if (!cmd.IsCompleted)
+                    scheduler.Add(cmd);
             }
-            catch
+            else
             {
-                break;
-            }
-            
-            command.Execute();
+                ICommand command;
+                try
+                {
+                    command = queue.Take();
+                }
+                catch
+                {
+                    break;
+                }
+                command.Execute();
+                if (!command.IsCompleted)
+                    scheduler.Add(command);
 
-            if (needSoftStop && queue.Count == 0)
-            {
-                needHardStop = true;
+                if (needSoftStop && queue.Count == 0 && !scheduler.HasCommand())
+                    needHardStop = true;
             }
         }
     }
@@ -71,6 +82,7 @@ public class HardStop : ICommand
 {
     private ServerThread server;
     public HardStop(ServerThread server) { this.server = server; }
+    public bool IsCompleted => true;
     public void Execute() { server.HardStop(); }
 }
 
@@ -78,5 +90,6 @@ public class SoftStop : ICommand
 {
     private ServerThread  server;
     public SoftStop(ServerThread server) { this.server = server; }
+    public bool IsCompleted => true;
     public void Execute() { server.SoftStop(); }
 }
