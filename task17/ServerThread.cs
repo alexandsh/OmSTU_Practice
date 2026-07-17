@@ -34,9 +34,7 @@ public class ServerThread
             if (scheduler.HasCommand())
             {
                 var cmd = scheduler.Select();
-                cmd.Execute();
-                if (!cmd.IsCompleted)
-                    scheduler.Add(cmd);
+                Run(cmd);
             }
             else
             {
@@ -49,13 +47,25 @@ public class ServerThread
                 {
                     break;
                 }
-                command.Execute();
-                if (!command.IsCompleted)
-                    scheduler.Add(command);
+                Run(command);
 
                 if (needSoftStop && queue.Count == 0 && !scheduler.HasCommand())
                     needHardStop = true;
             }
+        }
+    }
+
+    private void Run(ICommand command)
+    {
+        try
+        {
+            command.Execute();
+            if (!command.IsCompleted)
+                scheduler.Add(command);
+        }
+        catch (Exception ex)
+        {
+            ExceptionHandler.Handle?.Invoke(ex, command);
         }
     }
 
