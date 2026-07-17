@@ -39,7 +39,14 @@ public class ServerThread
                 break;
             }
             
-            command.Execute();
+            try
+            {
+                command.Execute();
+            }
+            catch (Exception e)
+            {
+                ExceptionHandler.Handle?.Invoke(e, command);
+            }
 
             if (needSoftStop && queue.Count == 0)
             {
