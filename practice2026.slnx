@@ -1,0 +1,5 @@
+<Solution>
+  <Project Path="ICommand/ICommand.csproj" />
+  <Project Path="task17/task17.csproj" />
+  <Project Path="task17tests/task17tests.csproj" />
+</Solution>
