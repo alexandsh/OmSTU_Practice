@@ -1,0 +1,19 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\ICommand\ICommand.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\IScheduler\IScheduler.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\RoundRobinScheduler\RoundRobinScheduler.csproj" />
+  </ItemGroup>
+
+</Project>
